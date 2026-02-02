@@ -21,17 +21,12 @@
       border-radius: 20px;
       text-align: center;
       box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-      max-width: 400px;
+      max-width: 420px;
+      z-index: 2;
     }
 
     h1 {
       color: #ff4d6d;
-      margin-bottom: 10px;
-    }
-
-    p {
-      font-size: 18px;
-      margin-bottom: 25px;
     }
 
     button {
@@ -41,7 +36,7 @@
       border-radius: 25px;
       cursor: pointer;
       margin: 10px;
-      transition: 0.3s;
+      transition: all 0.3s ease;
     }
 
     #yesBtn {
@@ -50,13 +45,24 @@
     }
 
     #yesBtn:hover {
-      background: #e63956;
-      transform: scale(1.1);
+      transform: scale(1.15);
     }
 
     #noBtn {
-      background: #ccc;
+      background: #ddd;
       position: absolute;
+    }
+
+    #begText {
+      font-size: 14px;
+      color: #999;
+      margin-top: 10px;
+    }
+
+    .cat {
+      position: absolute;
+      width: 120px;
+      z-index: 1;
     }
 
     #surprise {
@@ -70,44 +76,132 @@
       margin-top: 15px;
     }
 
-    .flowers {
-      font-size: 30px;
-      margin-top: 10px;
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 5;
     }
   </style>
 </head>
 <body>
 
-  <div class="card" id="card">
+  <audio id="music" src="love-song.mp3" loop></audio>
+  <audio id="meow" src="meow.mp3"></audio>
+
+  <canvas id="confetti"></canvas>
+
+  <div class="card">
     <h1>Kayla 💘</h1>
     <p>Will you be my Valentine?</p>
+
     <button id="yesBtn">Yes 💕</button>
-    <button id="noBtn">No 🙄</button>
+    <button id="noBtn">No 😒</button>
+
+    <div id="begText"></div>
 
     <div id="surprise">
-      <h2>YAY!!! 💐</h2>
-      <div class="flowers">🌸🌹🌷🌻💐</div>
-      <p>I’m so lucky to have you ❤️</p>
-      <img src="us-with-flowers.jpg" alt="Us with flowers">
+      <h2>I KNEW IT 😍</h2>
+      <p>You + Me = ❤️</p>
+      <img src="us-happy.jpg" alt="Us being happy">
     </div>
   </div>
 
   <script>
     const noBtn = document.getElementById("noBtn");
     const yesBtn = document.getElementById("yesBtn");
+    const begText = document.getElementById("begText");
     const surprise = document.getElementById("surprise");
+    const music = document.getElementById("music");
+    const meow = document.getElementById("meow");
+
+    const begs = [
+      "pls 😿",
+      "wait wait WAIT 🥺",
+      "the cat is crying",
+      "wrong choice 😭",
+      "think about us 🐱❤️"
+    ];
+
+    const cats = ["cat1.jpg", "cat2.jpg", "cat3.jpg"];
+    let noScale = 1;
 
     noBtn.addEventListener("mouseover", () => {
-      const x = Math.random() * (window.innerWidth - 100);
-      const y = Math.random() * (window.innerHeight - 50);
-      noBtn.style.left = `${x}px`;
-      noBtn.style.top = `${y}px`;
+      meow.currentTime = 0;
+      meow.play();
+
+      noScale -= 0.15;
+      noBtn.style.transform = `scale(${noScale})`;
+
+      noBtn.style.left = Math.random() * (window.innerWidth - 120) + "px";
+      noBtn.style.top = Math.random() * (window.innerHeight - 120) + "px";
+
+      begText.textContent = begs[Math.floor(Math.random() * begs.length)];
+
+      const cat = document.createElement("img");
+      cat.src = cats[Math.floor(Math.random() * cats.length)];
+      cat.className = "cat";
+      cat.style.left = Math.random() * (window.innerWidth - 120) + "px";
+      cat.style.top = Math.random() * (window.innerHeight - 120) + "px";
+      document.body.appendChild(cat);
+
+      setTimeout(() => cat.remove(), 3000);
     });
- yesBtn.addEventListener("click", () => {
+
+    yesBtn.addEventListener("click", () => {
+      music.play();
+      launchConfetti();
+
       surprise.style.display = "block";
       yesBtn.style.display = "none";
       noBtn.style.display = "none";
+      begText.style.display = "none";
     });
+
+    // 🎉 CONFETTI
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const pieces = [];
+
+    function launchConfetti() {
+      for (let i = 0; i < 200; i++) {
+        pieces.push({
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          r: Math.random() * 6 + 4,
+          d: Math.random() * 200,
+          color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+          tilt: Math.random() * 10 - 10,
+          tiltAngle: Math.random() * Math.PI
+        });
+      }
+      animateConfetti();
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      pieces.forEach((p, i) => {
+        p.y += Math.cos(p.d) + 4;
+        p.x += Math.sin(p.d);
+        p.tiltAngle += 0.1;
+
+        ctx.beginPath();
+        ctx.lineWidth = p.r;
+        ctx.strokeStyle = p.color;
+        ctx.moveTo(p.x + p.tilt, p.y);
+        ctx.lineTo(p.x, p.y + p.tilt + 10);
+        ctx.stroke();
+
+        if (p.y > canvas.height) pieces.splice(i, 1);
+      });
+
+      if (pieces.length > 0) requestAnimationFrame(animateConfetti);
+    }
   </script>
 
 </body>
