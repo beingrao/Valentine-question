@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kayla 💘</title>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      overflow: hidden;
+    }
+
+    .card {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      max-width: 420px;
+      z-index: 2;
+      position: relative;
+    }
+
+    h1 {
+      color: #ff4d6d;
+    }
+
+    p {
+      font-size: 18px;
+      transition: opacity 0.5s ease;
+    }
+
+    button {
+      padding: 12px 25px;
+      font-size: 16px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      margin: 10px;
+      transition: all 0.3s ease;
+    }
+
+    #yesBtn {
+      background: #ff4d6d;
+      color: white;
+      z-index: 3;
+      position: relative;
+    }
+
+    #yesBtn:hover {
+      transform: scale(1.15);
+    }
+
+    #noBtn {
+      background: #ddd;
+      position: fixed;
+      z-index: 10;
+      cursor: pointer;
+    }
+
+    #begText {
+      font-size: 14px;
+      color: #999;
+      margin-top: 10px;
+    }
+
+    /* CAT MEMES */
+    .cat {
+      position: fixed;
+      width: 120px;
+      z-index: 4;
+      pointer-events: none;
+      transform: translateX(-150px); /* start off-screen */
+      transition: transform 0.7s ease;
+    }
+
+    .cat.slide-in-left {
+      transform: translateX(0);
+    }
+
+    .cat.slide-in-right {
+      transform: translateX(0);
+    }
+
+    #surprise {
+      display: none;
+      margin-top: 20px;
+    }
+
+    #surprise img {
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      border-radius: 15px;
+      margin-top: 15px;
+      display: block;
+    }
+
+    /* FIREWORKS CANVAS */
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 5;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- AUDIO -->
+  <audio id="music" src="love-song.mp3" loop></audio>
+  <audio id="meow" src="meow.mp3"></audio>
+
+  <!-- FIREWORKS -->
+  <canvas id="fireworks"></canvas>
+
+  <!-- CARD -->
+  <div class="card">
+    <h1>Kayla 💘</h1>
+    <p id="prompt">Will you be my Valentine?</p>
+
+    <button id="yesBtn">Yes 💕</button>
+    <button id="noBtn">No 😒</button>
+
+    <div id="begText"></div>
+
+    <div id="surprise">
+      <h2>I KNEW IT 😍</h2>
+      <p>You + Me = ❤️</p>
+      <img src="us-happy.jpg.JPEG" alt="Us being happy together">
+    </div>
+  </div>
+
+  <script>
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const begText = document.getElementById("begText");
+    const surprise = document.getElementById("surprise");
+    const prompt = document.getElementById("prompt");
+    const music = document.getElementById("music");
+    const meow = document.getElementById("meow");
+
+    const begs = [
+      "pls 😿",
+      "wait wait WAIT 🥺",
+      "the cat is crying",
+      "wrong choice 😭",
+      "Kayla pls I made this whole website 🥹💻"
+    ];
+
+    const cats = ["cat1.jpg.png", "cat2.jpg.png", "cat3.jpg.jpg"];
+    let noScale = 1;
+    const catPositions = [];
+
+    // NO BUTTON BEHAVIOR
+    noBtn.addEventListener("mouseover", () => {
+      meow.currentTime = 0;
+      meow.play();
+
+      noScale -= 0.15;
+      noBtn.style.transform = `scale(${noScale})`;
+
+      // Keep button fully on-screen
+      const maxX = window.innerWidth - noBtn.offsetWidth;
+      const maxY = window.innerHeight - noBtn.offsetHeight;
+      noBtn.style.left = Math.random() * maxX + "px";
+      noBtn.style.top = Math.random() * maxY + "px";
+
+      begText.textContent = begs[Math.floor(Math.random() * begs.length)];
+
+      // CREATE CAT IMAGE
+      const cat = document.createElement("img");
+      cat.src = cats[Math.floor(Math.random() * cats.length)];
+      cat.className = "cat";
+
+      let catTop;
+      let attempts = 0;
+      do {
+        catTop = Math.random() * (window.innerHeight - 150);
+        attempts++;
+        if (attempts > 10) break;
+      } while (catPositions.some(pos => Math.abs(pos - catTop) < 140));
+
+      catPositions.push(catTop);
+      cat.style.top = catTop + "px";
+
+      // Slide-in from left or right
+      const side = Math.random() < 0.5 ? "left" : "right";
+      if (side === "left") {
+        cat.style.left = "-150px";
+        document.body.appendChild(cat);
+        setTimeout(() => cat.classList.add("slide-in-left"), 50);
+      } else {
+        cat.style.right = "-150px";
+        document.body.appendChild(cat);
+        setTimeout(() => cat.classList.add("slide-in-right"), 50);
+      }
+
+      setTimeout(() => {
+        document.body.removeChild(cat);
+        const index = catPositions.indexOf(catTop);
+        if (index > -1) catPositions.splice(index, 1);
+      }, 3000);
+    });
+
+    // YES BUTTON
+    yesBtn.addEventListener("click", () => {
+      music.play();
+      launchFireworks();
+
+      // Remove prompt text
+      prompt.style.display = "none";
+
+      yesBtn.style.display = "none";
+      noBtn.style.display = "none";
+      begText.style.display = "none";
+      surprise.style.display = "block";
+    });
+
+    // FIREWORKS LOGIC
+    const canvas = document.getElementById("fireworks");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const fireworks = [];
+
+    class Particle {
+      constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.r = Math.random() * 3 + 2;
+        this.color = color;
+        this.vx = (Math.random() - 0.5) * 8;
+        this.vy = (Math.random() - 0.5) * 8;
+        this.alpha = 1;
+        this.decay = Math.random() * 0.03 + 0.01;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.alpha -= this.decay;
+      }
+      draw() {
+        ctx.globalAlpha = this.alpha;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    function launchFireworks() {
+      for (let i = 0; i < 6; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height / 2;
+        const color = `hsl(${Math.random()*360}, 100%, 50%)`;
+        for (let j = 0; j < 40; j++) {
+          fireworks.push(new Particle(x, y, color));
+        }
+      }
+      animateFireworks();
+    }
+
+    function animateFireworks() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = fireworks.length - 1; i >= 0; i--) {
+        const p = fireworks[i];
+        p.update();
+        if (p.alpha <= 0) fireworks.splice(i, 1);
+        else p.draw();
+      }
+      if (fireworks.length > 0) requestAnimationFrame(animateFireworks);
+    }
+  </script>
+</body>
+</html>
