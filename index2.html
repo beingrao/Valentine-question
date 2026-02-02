@@ -228,7 +228,49 @@
 
       if (pieces.length > 0) requestAnimationFrame(animateConfetti);
     }
+#noBtn {
+  background: #ddd;
+  position: fixed; /* changed from absolute */
+  z-index: 10;     /* higher than cat images */
+  cursor: pointer;
+}
+And in your JS, when moving the button, use window coordinates instead of relative to the card:
+
+// NO BUTTON BEHAVIOR
+noBtn.addEventListener("mouseover", () => {
+  meow.currentTime = 0;
+  meow.play();
+
+  noScale -= 0.15;
+  noBtn.style.transform = `scale(${noScale})`;
+
+  // Keep button fully on-screen
+  const maxX = window.innerWidth - noBtn.offsetWidth;
+  const maxY = window.innerHeight - noBtn.offsetHeight;
+  noBtn.style.left = Math.random() * maxX + "px";
+  noBtn.style.top = Math.random() * maxY + "px";
+
+  begText.textContent = begs[Math.floor(Math.random() * begs.length)];
+
+  // CREATE CAT IMAGE (LEFT OR RIGHT)
+  const cat = document.createElement("img");
+  cat.src = cats[Math.floor(Math.random() * cats.length)];
+  cat.className = "cat";
+
+  const side = Math.random() < 0.5 ? "left" : "right";
+  if (side === "left") {
+    cat.style.left = "20px";
+  } else {
+    cat.style.right = "20px";
+  }
+  cat.style.top = Math.random() * (window.innerHeight - 150) + "px";
+  document.body.appendChild(cat);
+
+  setTimeout(() => cat.remove(), 3000);
+});
+    
   </script>
 
 </body>
 </html>
+
