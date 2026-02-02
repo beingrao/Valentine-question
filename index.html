@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Kayla 💘</title>
+
   <style>
     body {
       margin: 0;
@@ -27,6 +28,10 @@
 
     h1 {
       color: #ff4d6d;
+    }
+
+    p {
+      font-size: 18px;
     }
 
     button {
@@ -59,10 +64,12 @@
       margin-top: 10px;
     }
 
+    /* CAT MEMES */
     .cat {
-      position: absolute;
+      position: fixed;
       width: 120px;
-      z-index: 1;
+      z-index: 4;
+      pointer-events: none;
     }
 
     #surprise {
@@ -76,6 +83,7 @@
       margin-top: 15px;
     }
 
+    /* CONFETTI CANVAS */
     canvas {
       position: fixed;
       top: 0;
@@ -85,13 +93,17 @@
     }
   </style>
 </head>
+
 <body>
 
+  <!-- AUDIO -->
   <audio id="music" src="love-song.mp3" loop></audio>
   <audio id="meow" src="meow.mp3"></audio>
 
+  <!-- CONFETTI -->
   <canvas id="confetti"></canvas>
 
+  <!-- CARD -->
   <div class="card">
     <h1>Kayla 💘</h1>
     <p>Will you be my Valentine?</p>
@@ -104,13 +116,13 @@
     <div id="surprise">
       <h2>I KNEW IT 😍</h2>
       <p>You + Me = ❤️</p>
-      <img src="us-happy.jpg" alt="Us being happy">
+      <img src="us-happy.jpg" alt="Us being happy together">
     </div>
   </div>
 
   <script>
-    const noBtn = document.getElementById("noBtn");
     const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
     const begText = document.getElementById("begText");
     const surprise = document.getElementById("surprise");
     const music = document.getElementById("music");
@@ -121,12 +133,13 @@
       "wait wait WAIT 🥺",
       "the cat is crying",
       "wrong choice 😭",
-      "think about us 🐱❤️"
+      "Kayla pls I made this whole website 🥹💻"
     ];
 
-    const cats = ["cat1.jpg.png", "cat2.jpg", "cat3.jpg"];
+    const cats = ["cat1.jpg", "cat2.jpg", "cat3.jpg"];
     let noScale = 1;
 
+    // NO BUTTON BEHAVIOR
     noBtn.addEventListener("mouseover", () => {
       meow.currentTime = 0;
       meow.play();
@@ -139,30 +152,38 @@
 
       begText.textContent = begs[Math.floor(Math.random() * begs.length)];
 
+      // CREATE CAT (LEFT OR RIGHT ONLY)
       const cat = document.createElement("img");
       cat.src = cats[Math.floor(Math.random() * cats.length)];
       cat.className = "cat";
-      cat.style.left = Math.random() * (window.innerWidth - 120) + "px";
-      cat.style.top = Math.random() * (window.innerHeight - 120) + "px";
+
+      const side = Math.random() < 0.5 ? "left" : "right";
+      if (side === "left") {
+        cat.style.left = "20px";
+      } else {
+        cat.style.right = "20px";
+      }
+
+      cat.style.top = Math.random() * (window.innerHeight - 150) + "px";
       document.body.appendChild(cat);
 
       setTimeout(() => cat.remove(), 3000);
     });
 
+    // YES BUTTON
     yesBtn.addEventListener("click", () => {
       music.play();
       launchConfetti();
 
-      surprise.style.display = "block";
       yesBtn.style.display = "none";
       noBtn.style.display = "none";
       begText.style.display = "none";
+      surprise.style.display = "block";
     });
 
-    // 🎉 CONFETTI
+    // CONFETTI LOGIC
     const canvas = document.getElementById("confetti");
     const ctx = canvas.getContext("2d");
-
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
@@ -175,9 +196,7 @@
           y: canvas.height / 2,
           r: Math.random() * 6 + 4,
           d: Math.random() * 200,
-          color: `hsl(${Math.random() * 360}, 100%, 50%)`,
-          tilt: Math.random() * 10 - 10,
-          tiltAngle: Math.random() * Math.PI
+          color: `hsl(${Math.random() * 360}, 100%, 50%)`
         });
       }
       animateConfetti();
@@ -188,13 +207,12 @@
       pieces.forEach((p, i) => {
         p.y += Math.cos(p.d) + 4;
         p.x += Math.sin(p.d);
-        p.tiltAngle += 0.1;
 
         ctx.beginPath();
         ctx.lineWidth = p.r;
         ctx.strokeStyle = p.color;
-        ctx.moveTo(p.x + p.tilt, p.y);
-        ctx.lineTo(p.x, p.y + p.tilt + 10);
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p.x, p.y + 10);
         ctx.stroke();
 
         if (p.y > canvas.height) pieces.splice(i, 1);
