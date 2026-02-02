@@ -65,8 +65,8 @@
     transition: transform 0.7s ease;
   }
 
-  .cat.slide-in-left { transform: translateX(0); }
-  .cat.slide-in-right { transform: translateX(0); }
+  .cat.slide-in-left { transform: translateX(150px); }
+  .cat.slide-in-right { transform: translateX(-150px); }
 
   #surprise { display: none; margin-top: 20px; }
   #surprise img {
@@ -124,7 +124,7 @@ const begs = [
   "Kayla pls I made this whole website 🥹💻"
 ];
 
-const cats = ["cat1.jpg.png", "cat2.jpg.png", "cat3.jpg.jpg"];
+const cats = ["cat1.jpg.png","cat2.jpg.png","cat3.jpg.jpg"];
 let noScale = 1;
 const catPositions = [];
 let firstNo = true;
@@ -136,9 +136,8 @@ noBtn.addEventListener("mouseover", () => {
 
   noScale -= 0.15;
   noBtn.style.transform = `scale(${noScale})`;
-  begText.textContent = begs[Math.floor(Math.random() * begs.length)];
+  begText.textContent = begs[Math.floor(Math.random()*begs.length)];
 
-  // Move outside card after first hover
   if (firstNo) {
     noBtn.style.position = "fixed";
     firstNo = false;
@@ -159,89 +158,85 @@ noBtn.addEventListener("mouseover", () => {
 
   // CREATE CAT
   const cat = document.createElement("img");
-  cat.src = cats[Math.floor(Math.random() * cats.length)];
+  cat.src = cats[Math.floor(Math.random()*cats.length)];
   cat.className = "cat";
 
+  // vertical position avoiding overlap
   let catTop;
   attempts = 0;
   do {
     catTop = Math.random() * (window.innerHeight - 150);
     attempts++;
-    if (attempts > 20) break;
-  } while (catPositions.some(pos => Math.abs(pos - catTop) < 140));
-
+    if (attempts>20) break;
+  } while(catPositions.some(pos=>Math.abs(pos-catTop)<140));
   catPositions.push(catTop);
   cat.style.top = catTop + "px";
 
   // Slide in from left or right
-  const side = Math.random() < 0.5 ? "left" : "right";
-  if (side === "left") {
-    cat.style.left = "-150px";
+  const side = Math.random()<0.5 ? "left":"right";
+  if(side==="left") {
+    cat.style.left = "-150px"; 
     document.body.appendChild(cat);
-    setTimeout(() => cat.classList.add("slide-in-left"), 50);
+    setTimeout(()=>cat.classList.add("slide-in-left"),50);
   } else {
-    cat.style.right = "-150px";
+    cat.style.left = window.innerWidth + "px";
     document.body.appendChild(cat);
-    setTimeout(() => cat.classList.add("slide-in-right"), 50);
+    setTimeout(()=>cat.classList.add("slide-in-right"),50);
   }
-
-  // Cats now stay on screen indefinitely
 });
 
 // YES BUTTON
-yesBtn.addEventListener("click", () => {
+yesBtn.addEventListener("click",()=>{
   music.play();
   launchFireworks();
-
-  prompt.style.display = "none";
-  yesBtn.style.display = "none";
-  noBtn.style.display = "none";
-  begText.style.display = "none";
-  surprise.style.display = "block";
+  prompt.style.display="none";
+  yesBtn.style.display="none";
+  noBtn.style.display="none";
+  begText.style.display="none";
+  surprise.style.display="block";
 });
 
 // FIREWORKS LOGIC
-const canvas = document.getElementById("fireworks");
-const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-const fireworks = [];
+const canvas=document.getElementById("fireworks");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+const fireworks=[];
 
-class Particle {
-  constructor(x, y, color) {
-    this.x = x; this.y = y;
-    this.r = Math.random()*3 + 2;
-    this.color = color;
-    this.vx = (Math.random()-0.5)*8;
-    this.vy = (Math.random()-0.5)*8;
-    this.alpha = 1;
-    this.decay = Math.random()*0.02 + 0.01;
+class Particle{
+  constructor(x,y,color){
+    this.x=x; this.y=y;
+    this.r=Math.random()*3+2;
+    this.color=color;
+    this.vx=(Math.random()-0.5)*8;
+    this.vy=(Math.random()-0.5)*8;
+    this.alpha=1;
+    this.decay=Math.random()*0.01+0.005; // slower decay for longer fireworks
   }
-  update() { this.x += this.vx; this.y += this.vy; this.alpha -= this.decay; }
-  draw() { ctx.globalAlpha = this.alpha; ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2); ctx.fillStyle=this.color; ctx.fill(); ctx.globalAlpha=1; }
+  update(){this.x+=this.vx; this.y+=this.vy; this.alpha-=this.decay;}
+  draw(){ctx.globalAlpha=this.alpha;ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fillStyle=this.color;ctx.fill();ctx.globalAlpha=1;}
 }
 
-function launchFireworks() {
-  for (let i=0; i<8; i++) { // more bursts
-    const x = Math.random()*canvas.width;
-    const y = Math.random()*canvas.height/2;
-    const color = `hsl(${Math.random()*360},100%,50%)`;
-    for (let j=0; j<50; j++) fireworks.push(new Particle(x,y,color));
+function launchFireworks(){
+  for(let i=0;i<10;i++){ // more bursts
+    const x=Math.random()*canvas.width;
+    const y=Math.random()*canvas.height/2;
+    const color=`hsl(${Math.random()*360},100%,50%)`;
+    for(let j=0;j<60;j++) fireworks.push(new Particle(x,y,color));
   }
   animateFireworks();
 }
 
-function animateFireworks() {
+function animateFireworks(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  for (let i=fireworks.length-1; i>=0; i--) {
-    const p = fireworks[i];
+  for(let i=fireworks.length-1;i>=0;i--){
+    const p=fireworks[i];
     p.update();
-    if(p.alpha <= 0) fireworks.splice(i,1);
+    if(p.alpha<=0) fireworks.splice(i,1);
     else p.draw();
   }
   if(fireworks.length>0) requestAnimationFrame(animateFireworks);
 }
 </script>
-
 </body>
 </html>
