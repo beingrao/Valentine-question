@@ -37,6 +37,7 @@
     cursor: pointer;
     margin: 10px;
     transition: all 0.3s ease;
+    touch-action: manipulation; /* mobile-friendly */
   }
 
   #yesBtn {
@@ -50,7 +51,7 @@
 
   #noBtn {
     background: #ddd;
-    position: relative; /* inside card initially */
+    position: relative;
     z-index: 10;
     cursor: pointer;
   }
@@ -130,8 +131,10 @@ const catPositions = [];
 let firstNo = true;
 const activeCats = [];
 
-// NO BUTTON BEHAVIOR
-noBtn.addEventListener("mouseover", () => {
+// ------------------------
+// NEW: NO BUTTON HANDLER
+// ------------------------
+const noHandler = () => {
   meow.currentTime = 0;
   meow.play();
 
@@ -168,7 +171,7 @@ noBtn.addEventListener("mouseover", () => {
   do {
     catTop = Math.random() * (window.innerHeight - 150);
     attempts++;
-    if (attempts>20) break;
+    if(attempts>20) break;
   } while(catPositions.some(pos => Math.abs(pos-catTop)<140));
   catPositions.push(catTop);
   cat.style.top = catTop + "px";
@@ -193,9 +196,15 @@ noBtn.addEventListener("mouseover", () => {
     const index = activeCats.indexOf(cat);
     if(index > -1) activeCats.splice(index,1);
   }, 3000);
-});
+};
 
+// ADD LISTENERS FOR DESKTOP + MOBILE
+noBtn.addEventListener("mouseover", noHandler);
+noBtn.addEventListener("touchstart", noHandler);
+
+// ------------------------
 // YES BUTTON
+// ------------------------
 yesBtn.addEventListener("click",()=>{
   music.play();
   launchFireworks();
@@ -212,7 +221,9 @@ yesBtn.addEventListener("click",()=>{
   surprise.style.display="block";
 });
 
+// ------------------------
 // FIREWORKS LOGIC
+// ------------------------
 const canvas=document.getElementById("fireworks");
 const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth;
@@ -235,7 +246,6 @@ class Particle{
 
 function launchFireworks() {
   const endTime = Date.now() + 180000; // 3 minutes
-
   const interval = setInterval(() => {
     if (Date.now() > endTime) {
       clearInterval(interval);
@@ -245,8 +255,7 @@ function launchFireworks() {
     const y = Math.random() * canvas.height / 2;
     const color = `hsl(${Math.random()*360},100%,50%)`;
     for (let j=0; j<60; j++) fireworks.push(new Particle(x,y,color));
-  }, 500); // every 0.5 seconds
-
+  }, 500);
   animateFireworks();
 }
 
