@@ -91,15 +91,23 @@
     margin-top: 16px;
   }
 
- #surprise img {
-  width: 100%;
-  max-height: min(55svh, 360px);
-  object-fit: contain;
-  border-radius: 15px;
-  margin-top: 12px;
-  display: block;
-  background: #fff; /* prevents odd empty space colors */
-}
+  /* ⭐ IMAGE FIX (WORKS ON PHONE + LAPTOP) ⭐ */
+  #surprise img {
+    width: 100%;
+    height: auto;
+    max-height: none;
+    object-fit: contain;
+    border-radius: 15px;
+    margin-top: 12px;
+    display: block;
+  }
+
+  /* Mobile-only height safety */
+  @media (max-width: 768px) {
+    #surprise img {
+      max-height: 60svh;
+    }
+  }
 
   canvas {
     position: fixed;
@@ -152,7 +160,6 @@ const begs = [
 
 const cats = ["cat1.jpg.png","cat2.jpg.png","cat3.jpg.jpg"];
 let noScale = 1;
-const catPositions = [];
 let firstNo = true;
 const activeCats = [];
 
@@ -169,18 +176,14 @@ const noHandler = () => {
     firstNo = false;
   }
 
-  let noLeft = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-  let noTop = Math.random() * (window.innerHeight - noBtn.offsetHeight);
-  noBtn.style.left = noLeft + "px";
-  noBtn.style.top = noTop + "px";
+  noBtn.style.left = Math.random() * (window.innerWidth - noBtn.offsetWidth) + "px";
+  noBtn.style.top = Math.random() * (window.innerHeight - noBtn.offsetHeight) + "px";
 
   const cat = document.createElement("img");
   cat.src = cats[Math.floor(Math.random()*cats.length)];
   cat.className = "cat";
 
-  let catTop = Math.random() * (window.innerHeight - 150);
-  cat.style.top = catTop + "px";
-
+  cat.style.top = Math.random() * (window.innerHeight - 150) + "px";
   const side = Math.random() < 0.5 ? "left" : "right";
   cat.style.left = side === "left" ? "-150px" : window.innerWidth + "px";
 
@@ -208,7 +211,7 @@ yesBtn.addEventListener("click", () => {
   surprise.style.display = "block";
 });
 
-// FIREWORKS
+/* FIREWORKS */
 const canvas = document.getElementById("fireworks");
 const ctx = canvas.getContext("2d");
 const fireworks = [];
