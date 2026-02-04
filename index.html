@@ -91,14 +91,15 @@
     margin-top: 16px;
   }
 
-  #surprise img {
-    width: 100%;
-    max-height: min(40svh, 300px);
-    object-fit: cover;
-    border-radius: 15px;
-    margin-top: 12px;
-    display: block;
-  }
+ #surprise img {
+  width: 100%;
+  max-height: min(55svh, 360px);
+  object-fit: contain;
+  border-radius: 15px;
+  margin-top: 12px;
+  display: block;
+  background: #fff; /* prevents odd empty space colors */
+}
 
   canvas {
     position: fixed;
