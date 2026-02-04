@@ -2,42 +2,55 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kayla 💘</title>
+
 <style>
+  * { box-sizing: border-box; }
+
   body {
     margin: 0;
-    height: 100vh;
+    min-height: 100svh;
     background: linear-gradient(135deg, #ff9a9e, #fad0c4);
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Comic Sans MS', cursive, sans-serif;
     overflow: hidden;
+    padding: 16px;
   }
 
   .card {
     background: white;
-    padding: 40px;
+    width: min(92vw, 420px);
+    padding: clamp(20px, 5vw, 40px);
     border-radius: 20px;
     text-align: center;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    max-width: 420px;
     z-index: 2;
     position: relative;
   }
 
-  h1 { color: #ff4d6d; }
-  p { font-size: 18px; transition: opacity 0.5s ease; }
+  h1 {
+    color: #ff4d6d;
+    font-size: clamp(24px, 6vw, 32px);
+    margin-top: 0;
+  }
+
+  p {
+    font-size: clamp(15px, 4vw, 18px);
+    transition: opacity 0.5s ease;
+  }
 
   button {
-    padding: 12px 25px;
-    font-size: 16px;
+    padding: 12px 22px;
+    font-size: clamp(14px, 4vw, 16px);
     border: none;
     border-radius: 25px;
     cursor: pointer;
-    margin: 10px;
+    margin: 8px;
     transition: all 0.3s ease;
-    touch-action: manipulation; /* mobile-friendly */
+    touch-action: manipulation;
   }
 
   #yesBtn {
@@ -53,14 +66,18 @@
     background: #ddd;
     position: relative;
     z-index: 10;
-    cursor: pointer;
   }
 
-  #begText { font-size: 14px; color: #999; margin-top: 10px; }
+  #begText {
+    font-size: clamp(12px, 3.5vw, 14px);
+    color: #999;
+    margin-top: 10px;
+    min-height: 1.2em;
+  }
 
   .cat {
     position: fixed;
-    width: 120px;
+    width: clamp(80px, 25vw, 120px);
     z-index: 4;
     pointer-events: none;
     transition: transform 0.7s ease;
@@ -69,25 +86,29 @@
   .cat.slide-in-left { transform: translateX(150px); }
   .cat.slide-in-right { transform: translateX(-150px); }
 
-  #surprise { display: none; margin-top: 20px; }
+  #surprise {
+    display: none;
+    margin-top: 16px;
+  }
+
   #surprise img {
     width: 100%;
-    max-height: 300px;
+    max-height: min(40svh, 300px);
     object-fit: cover;
     border-radius: 15px;
-    margin-top: 15px;
+    margin-top: 12px;
     display: block;
   }
 
   canvas {
     position: fixed;
-    top: 0;
-    left: 0;
+    inset: 0;
     pointer-events: none;
     z-index: 5;
   }
 </style>
 </head>
+
 <body>
 
 <audio id="music" src="love-song.mp3" loop></audio>
@@ -98,9 +119,12 @@
 <div class="card">
   <h1>Kayla 💘</h1>
   <p id="prompt">Will you be my Valentine?</p>
+
   <button id="yesBtn">Yes 💕</button>
   <button id="noBtn">No 😒</button>
+
   <div id="begText"></div>
+
   <div id="surprise">
     <h2>I KNEW IT 😍</h2>
     <p>You + Me = ❤️❤️❤️</p>
@@ -131,14 +155,11 @@ const catPositions = [];
 let firstNo = true;
 const activeCats = [];
 
-// ------------------------
-// NEW: NO BUTTON HANDLER
-// ------------------------
 const noHandler = () => {
   meow.currentTime = 0;
   meow.play();
 
-  noScale -= 0.15;
+  noScale = Math.max(noScale - 0.12, 0.4);
   noBtn.style.transform = `scale(${noScale})`;
   begText.textContent = begs[Math.floor(Math.random()*begs.length)];
 
@@ -147,128 +168,100 @@ const noHandler = () => {
     firstNo = false;
   }
 
-  // Keep No button away from cats
-  let noTop, noLeft;
-  let attempts = 0;
-  do {
-    noLeft = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-    noTop = Math.random() * (window.innerHeight - noBtn.offsetHeight);
-    attempts++;
-    if (attempts > 50) break;
-  } while (catPositions.some(pos => Math.abs(pos - noTop) < 140));
-
+  let noLeft = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+  let noTop = Math.random() * (window.innerHeight - noBtn.offsetHeight);
   noBtn.style.left = noLeft + "px";
   noBtn.style.top = noTop + "px";
 
-  // CREATE CAT
   const cat = document.createElement("img");
   cat.src = cats[Math.floor(Math.random()*cats.length)];
   cat.className = "cat";
 
-  // vertical position avoiding overlap
-  let catTop;
-  attempts = 0;
-  do {
-    catTop = Math.random() * (window.innerHeight - 150);
-    attempts++;
-    if(attempts>20) break;
-  } while(catPositions.some(pos => Math.abs(pos-catTop)<140));
-  catPositions.push(catTop);
+  let catTop = Math.random() * (window.innerHeight - 150);
   cat.style.top = catTop + "px";
 
-  // Slide in from left or right
-  const side = Math.random()<0.5 ? "left":"right";
-  if(side==="left") {
-    cat.style.left = "-150px"; 
-    document.body.appendChild(cat);
-    setTimeout(()=>cat.classList.add("slide-in-left"),50);
-  } else {
-    cat.style.left = window.innerWidth + "px";
-    document.body.appendChild(cat);
-    setTimeout(()=>cat.classList.add("slide-in-right"),50);
-  }
+  const side = Math.random() < 0.5 ? "left" : "right";
+  cat.style.left = side === "left" ? "-150px" : window.innerWidth + "px";
+
+  document.body.appendChild(cat);
+  setTimeout(() => cat.classList.add(side === "left" ? "slide-in-left" : "slide-in-right"), 50);
 
   activeCats.push(cat);
-
-  // Remove cat after 3 seconds
-  setTimeout(() => {
-    cat.remove();
-    const index = activeCats.indexOf(cat);
-    if(index > -1) activeCats.splice(index,1);
-  }, 3000);
+  setTimeout(() => cat.remove(), 3000);
 };
 
-// ADD LISTENERS FOR DESKTOP + MOBILE
 noBtn.addEventListener("mouseover", noHandler);
 noBtn.addEventListener("touchstart", noHandler);
 
-// ------------------------
-// YES BUTTON
-// ------------------------
-yesBtn.addEventListener("click",()=>{
+yesBtn.addEventListener("click", () => {
   music.play();
   launchFireworks();
 
-  // Remove all active cats
   activeCats.forEach(cat => cat.remove());
   activeCats.length = 0;
-  catPositions.length = 0;
 
-  prompt.style.display="none";
-  yesBtn.style.display="none";
-  noBtn.style.display="none";
-  begText.style.display="none";
-  surprise.style.display="block";
+  prompt.style.display = "none";
+  yesBtn.style.display = "none";
+  noBtn.style.display = "none";
+  begText.style.display = "none";
+  surprise.style.display = "block";
 });
 
-// ------------------------
-// FIREWORKS LOGIC
-// ------------------------
-const canvas=document.getElementById("fireworks");
-const ctx=canvas.getContext("2d");
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
-const fireworks=[];
+// FIREWORKS
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+const fireworks = [];
 
-class Particle{
-  constructor(x,y,color){
-    this.x=x; this.y=y;
-    this.r=Math.random()*3+2;
-    this.color=color;
-    this.vx=(Math.random()-0.5)*8;
-    this.vy=(Math.random()-0.5)*8;
-    this.alpha=1;
-    this.decay=Math.random()*0.01+0.005;
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+class Particle {
+  constructor(x, y, color) {
+    this.x = x; this.y = y;
+    this.r = Math.random() * 3 + 2;
+    this.color = color;
+    this.vx = (Math.random() - 0.5) * 8;
+    this.vy = (Math.random() - 0.5) * 8;
+    this.alpha = 1;
+    this.decay = Math.random() * 0.01 + 0.005;
   }
-  update(){this.x+=this.vx; this.y+=this.vy; this.alpha-=this.decay;}
-  draw(){ctx.globalAlpha=this.alpha;ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fillStyle=this.color;ctx.fill();ctx.globalAlpha=1;}
+  update() { this.x += this.vx; this.y += this.vy; this.alpha -= this.decay; }
+  draw() {
+    ctx.globalAlpha = this.alpha;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
 }
 
 function launchFireworks() {
-  const endTime = Date.now() + 180000; // 3 minutes
+  const endTime = Date.now() + 180000;
   const interval = setInterval(() => {
-    if (Date.now() > endTime) {
-      clearInterval(interval);
-      return;
-    }
+    if (Date.now() > endTime) return clearInterval(interval);
     const x = Math.random() * canvas.width;
     const y = Math.random() * canvas.height / 2;
     const color = `hsl(${Math.random()*360},100%,50%)`;
-    for (let j=0; j<60; j++) fireworks.push(new Particle(x,y,color));
+    for (let i = 0; i < 60; i++) fireworks.push(new Particle(x, y, color));
   }, 500);
   animateFireworks();
 }
 
-function animateFireworks(){
+function animateFireworks() {
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  for(let i=fireworks.length-1;i>=0;i--){
-    const p = fireworks[i];
-    p.update();
-    if(p.alpha <= 0) fireworks.splice(i,1);
-    else p.draw();
+  for (let i = fireworks.length - 1; i >= 0; i--) {
+    fireworks[i].update();
+    if (fireworks[i].alpha <= 0) fireworks.splice(i, 1);
+    else fireworks[i].draw();
   }
   requestAnimationFrame(animateFireworks);
 }
 </script>
+
 </body>
 </html>
