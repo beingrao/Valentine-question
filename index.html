@@ -75,7 +75,6 @@
     margin-top: 16px;
   }
 
-  /* ---------- IMAGE BASE ---------- */
   #surprise img {
     width: 100%;
     height: auto;
@@ -85,35 +84,19 @@
     display: block;
   }
 
-  /* ---------- PHONE MODE ---------- */
   @media (max-width: 768px) {
-    body {
-      overflow: hidden;
-    }
-
-    .card {
-      max-height: 92svh;
-    }
-
-    #surprise img {
-      max-height: 60svh;
-    }
+    body { overflow: hidden; }
+    .card { max-height: 92svh; }
+    #surprise img { max-height: 60svh; }
   }
 
-  /* ---------- LAPTOP / DESKTOP MODE ---------- */
   @media (min-width: 769px) {
-    body {
-      overflow: auto;
-    }
-
+    body { overflow: auto; }
     .card {
       max-height: 90vh;
       overflow-y: auto;
     }
-
-    #surprise img {
-      max-height: 45vh;
-    }
+    #surprise img { max-height: 45vh; }
   }
 
   .cat {
@@ -176,7 +159,16 @@ const begs = [
   "Kayla pls I made this whole website 🥹💻"
 ];
 
-const cats = ["cat1.jpg.png","cat2.jpg.png","cat3.jpg.jpg","Mrboi.jpeg","cat111.png","Surprised.png"];
+const cats = [
+  "cat1.jpg.png",
+  "cat2.jpg.png",
+  "cat3.jpg.jpg",
+  "Mrboi.jpeg",
+  "cat111.png",
+  "Surprised.png"
+];
+
+let catIndex = 0;          // ⭐ added
 let noScale = 1;
 let firstNo = true;
 const activeCats = [];
@@ -198,7 +190,8 @@ const noHandler = () => {
   noBtn.style.top = Math.random() * (window.innerHeight - noBtn.offsetHeight) + "px";
 
   const cat = document.createElement("img");
-  cat.src = cats[Math.floor(Math.random()*cats.length)];
+  cat.src = cats[catIndex];                    // ⭐ sequential
+  catIndex = (catIndex + 1) % cats.length;     // ⭐ loop
   cat.className = "cat";
 
   cat.style.top = Math.random() * (window.innerHeight - 150) + "px";
