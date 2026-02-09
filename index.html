@@ -84,19 +84,31 @@
     display: block;
   }
 
+  /* 📱 MOBILE — unchanged */
   @media (max-width: 768px) {
     body { overflow: hidden; }
     .card { max-height: 92svh; }
     #surprise img { max-height: 60svh; }
   }
 
+  /* 💻 DESKTOP — no scrolling */
   @media (min-width: 769px) {
-    body { overflow: auto; }
+    body {
+      overflow: hidden;
+    }
+
     .card {
       max-height: 90vh;
-      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
-    #surprise img { max-height: 45vh; }
+
+    #surprise img {
+      max-height: 40vh;
+      width: 100%;
+      object-fit: contain;
+    }
   }
 
   .cat {
@@ -139,7 +151,7 @@
     <h2>I KNEW IT 😍</h2>
     <p>You + Me = ❤️❤️❤️</p>
     <img src="us-happy.jpg.JPEG" alt="Us being happy together">
-   <h2>Happy Valentines Day hot stuff. Miss you loads!</h2>
+    <h2>Happy Valentines Day hot stuff. Miss you loads!</h2>
   </div>
 </div>
 
@@ -169,7 +181,7 @@ const cats = [
   "Surprised.png"
 ];
 
-let catIndex = 0;          // ⭐ added
+let catIndex = 0;
 let noScale = 1;
 let firstNo = true;
 const activeCats = [];
@@ -191,8 +203,8 @@ const noHandler = () => {
   noBtn.style.top = Math.random() * (window.innerHeight - noBtn.offsetHeight) + "px";
 
   const cat = document.createElement("img");
-  cat.src = cats[catIndex];                    // ⭐ sequential
-  catIndex = (catIndex + 1) % cats.length;     // ⭐ loop
+  cat.src = cats[catIndex];
+  catIndex = (catIndex + 1) % cats.length;
   cat.className = "cat";
 
   cat.style.top = Math.random() * (window.innerHeight - 150) + "px";
@@ -237,7 +249,8 @@ window.addEventListener("resize", resizeCanvas);
 
 class Particle {
   constructor(x, y, color) {
-    this.x = x; this.y = y;
+    this.x = x;
+    this.y = y;
     this.r = Math.random() * 3 + 2;
     this.color = color;
     this.vx = (Math.random() - 0.5) * 8;
@@ -245,7 +258,11 @@ class Particle {
     this.alpha = 1;
     this.decay = Math.random() * 0.01 + 0.005;
   }
-  update() { this.x += this.vx; this.y += this.vy; this.alpha -= this.decay; }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.alpha -= this.decay;
+  }
   draw() {
     ctx.globalAlpha = this.alpha;
     ctx.beginPath();
