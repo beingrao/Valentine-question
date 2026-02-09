@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Kayla 💘</title>
 
 <style>
@@ -28,13 +28,14 @@
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     position: relative;
     z-index: 2;
+    transition: max-height 0.5s ease; /* smooth expansion */
+    overflow: hidden;
   }
 
   h1 {
     color: #ff4d6d;
     font-size: clamp(24px, 6vw, 32px);
     margin-top: 0;
-    margin-bottom: 8px; /* 🔧 tighten space below Kayla */
   }
 
   p {
@@ -76,11 +77,6 @@
     margin-top: 16px;
   }
 
-  /* 🔧 FIX: tighten spacing between Kayla and I KNEW IT */
-  #surprise h2:first-child {
-    margin-top: 4px;
-  }
-
   #surprise img {
     width: 100%;
     height: auto;
@@ -93,25 +89,44 @@
   /* 📱 MOBILE — unchanged */
   @media (max-width: 768px) {
     body { overflow: hidden; }
-    .card { max-height: 92svh; }
+    .card { max-height: 92svh; transition: none; } /* no transition on mobile */
     #surprise img { max-height: 60svh; }
   }
 
-  /* 💻 DESKTOP — unchanged */
+  /* 💻 DESKTOP — no scrolling */
   @media (min-width: 769px) {
-    body { overflow: hidden; }
+    body {
+      overflow: hidden;
+    }
 
     .card {
-      max-height: 90vh;
+      max-height: 50vh; /* default smaller card */
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
 
     #surprise img {
-      max-height: 40vh;
+      max-height: 60vh; /* increased image size on desktop */
       width: 100%;
       object-fit: contain;
+    }
+
+    .card > h1 {
+      margin-bottom: 0.15em !important;
+      line-height: 1.2 !important;
+    }
+
+    #surprise > p {
+      margin-top: 0 !important;
+      margin-bottom: 0.15em !important;
+      line-height: 1.2 !important;
+    }
+
+    #surprise > h2:first-of-type {
+      margin-top: 0 !important;
+      margin-bottom: 0.5em !important; /* more spacing here */
+      line-height: 1.2 !important;
     }
   }
 
@@ -142,7 +157,7 @@
 
 <canvas id="fireworks"></canvas>
 
-<div class="card">
+<div class="card" id="card">
   <h1>Kayla 💘</h1>
   <p id="prompt">Will you be my Valentine?</p>
 
@@ -154,7 +169,7 @@
   <div id="surprise">
     <h2>I KNEW IT 😍</h2>
     <p>You + Me = ❤️❤️❤️</p>
-    <img src="us-happy.jpg.JPEG" alt="Us being happy together">
+    <img src="us-happy.jpg.JPEG" alt="Us being happy together" />
     <h2>Happy Valentines Day hot stuff. Miss you loads!</h2>
   </div>
 </div>
@@ -167,6 +182,7 @@ const surprise = document.getElementById("surprise");
 const prompt = document.getElementById("prompt");
 const music = document.getElementById("music");
 const meow = document.getElementById("meow");
+const card = document.getElementById("card");
 
 const begs = [
   "pls 😿",
@@ -196,15 +212,17 @@ const noHandler = () => {
 
   noScale = Math.max(noScale - 0.12, 0.4);
   noBtn.style.transform = `scale(${noScale})`;
-  begText.textContent = begs[Math.floor(Math.random()*begs.length)];
+  begText.textContent = begs[Math.floor(Math.random() * begs.length)];
 
   if (firstNo) {
     noBtn.style.position = "fixed";
     firstNo = false;
   }
 
-  noBtn.style.left = Math.random() * (window.innerWidth - noBtn.offsetWidth) + "px";
-  noBtn.style.top = Math.random() * (window.innerHeight - noBtn.offsetHeight) + "px";
+  noBtn.style.left =
+    Math.random() * (window.innerWidth - noBtn.offsetWidth) + "px";
+  noBtn.style.top =
+    Math.random() * (window.innerHeight - noBtn.offsetHeight) + "px";
 
   const cat = document.createElement("img");
   cat.src = cats[catIndex];
@@ -216,7 +234,10 @@ const noHandler = () => {
   cat.style.left = side === "left" ? "-150px" : window.innerWidth + "px";
 
   document.body.appendChild(cat);
-  setTimeout(() => cat.classList.add(side === "left" ? "slide-in-left" : "slide-in-right"), 50);
+  setTimeout(
+    () => cat.classList.add(side === "left" ? "slide-in-left" : "slide-in-right"),
+    50
+  );
 
   activeCats.push(cat);
   setTimeout(() => cat.remove(), 3000);
@@ -229,13 +250,19 @@ yesBtn.addEventListener("click", () => {
   music.play();
   launchFireworks();
 
-  activeCats.forEach(cat => cat.remove());
+  activeCats.forEach((cat) => cat.remove());
   activeCats.length = 0;
 
   prompt.style.display = "none";
   yesBtn.style.display = "none";
   noBtn.style.display = "none";
   begText.style.display = "none";
+
+  // Expand card for desktop screens
+  if (window.innerWidth >= 769) {
+    card.style.maxHeight = "100vh"; // increase height smoothly
+  }
+
   surprise.style.display = "block";
 });
 
@@ -282,15 +309,15 @@ function launchFireworks() {
   const interval = setInterval(() => {
     if (Date.now() > endTime) return clearInterval(interval);
     const x = Math.random() * canvas.width;
-    const y = Math.random() * canvas.height / 2;
-    const color = `hsl(${Math.random()*360},100%,50%)`;
+    const y = Math.random() * (canvas.height / 2);
+    const color = `hsl(${Math.random() * 360},100%,50%)`;
     for (let i = 0; i < 60; i++) fireworks.push(new Particle(x, y, color));
   }, 500);
   animateFireworks();
 }
 
 function animateFireworks() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   for (let i = fireworks.length - 1; i >= 0; i--) {
     fireworks[i].update();
     if (fireworks[i].alpha <= 0) fireworks.splice(i, 1);
