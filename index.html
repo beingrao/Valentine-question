@@ -12,18 +12,11 @@
     margin: 0;
     min-height: 100vh;
     background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-family: 'Comic Sans MS', cursive, sans-serif;
-    display: flex;
-    justify-content: center;
-    padding: 0;
-  }
-
-  /* Outer container ensures uniform top & bottom gap */
-  .container {
-    padding: 40px 16px; /* 40px top & bottom gap */
-    display: flex;
-    justify-content: center;
-    width: 100%;
+    padding: 16px;
   }
 
   .card {
@@ -35,16 +28,13 @@
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     position: relative;
     z-index: 2;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
   }
 
   h1 {
     color: #ff4d6d;
     font-size: clamp(24px, 6vw, 32px);
     margin-top: 0;
+    margin-bottom: 8px; /* 🔧 tighten space below Kayla */
   }
 
   p {
@@ -86,13 +76,9 @@
     margin-top: 16px;
   }
 
-  #surprise h2:first-of-type {
-    margin-bottom: 8px; /* spacing after "I KNEW IT" */
-  }
-
-  #surprise p:first-of-type {
-    margin-top: 0;
-    margin-bottom: 16px; /* spacing after "You + Me = ❤️❤️❤️" */
+  /* 🔧 FIX: tighten spacing between Kayla and I KNEW IT */
+  #surprise h2:first-child {
+    margin-top: 4px;
   }
 
   #surprise img {
@@ -100,13 +86,33 @@
     height: auto;
     object-fit: contain;
     border-radius: 15px;
-    margin-bottom: 16px;
+    margin-top: 12px;
+    display: block;
   }
 
-  /* MOBILE */
+  /* 📱 MOBILE — unchanged */
   @media (max-width: 768px) {
     body { overflow: hidden; }
+    .card { max-height: 92svh; }
     #surprise img { max-height: 60svh; }
+  }
+
+  /* 💻 DESKTOP — unchanged */
+  @media (min-width: 769px) {
+    body { overflow: hidden; }
+
+    .card {
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    #surprise img {
+      max-height: 40vh;
+      width: 100%;
+      object-fit: contain;
+    }
   }
 
   .cat {
@@ -136,22 +142,20 @@
 
 <canvas id="fireworks"></canvas>
 
-<div class="container">
-  <div class="card">
-    <h1>Kayla 💘</h1>
-    <p id="prompt">Will you be my Valentine?</p>
+<div class="card">
+  <h1>Kayla 💘</h1>
+  <p id="prompt">Will you be my Valentine?</p>
 
-    <button id="yesBtn">Yes 💕</button>
-    <button id="noBtn">No 😒</button>
+  <button id="yesBtn">Yes 💕</button>
+  <button id="noBtn">No 😒</button>
 
-    <div id="begText"></div>
+  <div id="begText"></div>
 
-    <div id="surprise">
-      <h2>I KNEW IT 😍</h2>
-      <p>You + Me = ❤️❤️❤️</p>
-      <img src="us-happy.jpg.JPEG" alt="Us being happy together">
-      <h2>Happy Valentines Day hot stuff. Miss you loads!</h2>
-    </div>
+  <div id="surprise">
+    <h2>I KNEW IT 😍</h2>
+    <p>You + Me = ❤️❤️❤️</p>
+    <img src="us-happy.jpg.JPEG" alt="Us being happy together">
+    <h2>Happy Valentines Day hot stuff. Miss you loads!</h2>
   </div>
 </div>
 
@@ -249,7 +253,8 @@ window.addEventListener("resize", resizeCanvas);
 
 class Particle {
   constructor(x, y, color) {
-    this.x = x; this.y = y;
+    this.x = x;
+    this.y = y;
     this.r = Math.random() * 3 + 2;
     this.color = color;
     this.vx = (Math.random() - 0.5) * 8;
@@ -257,7 +262,11 @@ class Particle {
     this.alpha = 1;
     this.decay = Math.random() * 0.01 + 0.005;
   }
-  update() { this.x += this.vx; this.y += this.vy; this.alpha -= this.decay; }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.alpha -= this.decay;
+  }
   draw() {
     ctx.globalAlpha = this.alpha;
     ctx.beginPath();
@@ -293,3 +302,5 @@ function animateFireworks() {
 
 </body>
 </html>
+
+
