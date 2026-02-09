@@ -38,6 +38,7 @@
 
   p {
     font-size: clamp(15px, 4vw, 18px);
+    margin: 0.3em 0; /* tighter line spacing for paragraphs */
   }
 
   button {
@@ -75,6 +76,10 @@
     margin-top: 16px;
   }
 
+  #surprise h2 {
+    margin: 0.3em 0; /* fix spacing between lines */
+  }
+
   #surprise img {
     width: 100%;
     height: auto;
@@ -84,31 +89,23 @@
     display: block;
   }
 
-  /* 📱 MOBILE — unchanged */
+  /* 📱 MOBILE */
   @media (max-width: 768px) {
     body { overflow: hidden; }
     .card { max-height: 92svh; }
     #surprise img { max-height: 60svh; }
   }
 
-  /* 💻 DESKTOP — no scrolling */
+  /* 💻 DESKTOP — no scrolling, line spacing fixed */
   @media (min-width: 769px) {
-    body {
-      overflow: hidden;
-    }
-
+    body { overflow: hidden; }
     .card {
       max-height: 90vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
-
-    #surprise img {
-      max-height: 40vh;
-      width: 100%;
-      object-fit: contain;
-    }
+    #surprise img { max-height: 40vh; width: 100%; object-fit: contain; }
   }
 
   .cat {
@@ -249,8 +246,7 @@ window.addEventListener("resize", resizeCanvas);
 
 class Particle {
   constructor(x, y, color) {
-    this.x = x;
-    this.y = y;
+    this.x = x; this.y = y;
     this.r = Math.random() * 3 + 2;
     this.color = color;
     this.vx = (Math.random() - 0.5) * 8;
@@ -266,7 +262,7 @@ class Particle {
   draw() {
     ctx.globalAlpha = this.alpha;
     ctx.beginPath();
-    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
     ctx.fillStyle = this.color;
     ctx.fill();
     ctx.globalAlpha = 1;
@@ -289,7 +285,7 @@ function animateFireworks() {
   ctx.clearRect(0,0,canvas.width,canvas.height);
   for (let i = fireworks.length - 1; i >= 0; i--) {
     fireworks[i].update();
-    if (fireworks[i].alpha <= 0) fireworks.splice(i, 1);
+    if (fireworks[i].alpha <= 0) fireworks.splice(i,1);
     else fireworks[i].draw();
   }
   requestAnimationFrame(animateFireworks);
