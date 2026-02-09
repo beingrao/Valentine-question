@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kayla 💘</title>
 
 <style>
@@ -17,6 +17,7 @@
     justify-content: center;
     font-family: 'Comic Sans MS', cursive, sans-serif;
     padding: 16px;
+    flex-direction: column;
   }
 
   .card {
@@ -28,8 +29,13 @@
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     position: relative;
     z-index: 2;
-    transition: max-height 0.5s ease, margin 0.5s ease;
-    overflow: hidden;
+
+    /* Desktop spacing fix */
+    max-height: calc(100vh - 40px); /* 20px gap top & bottom */
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   h1 {
@@ -77,57 +83,28 @@
     margin-top: 16px;
   }
 
+  #surprise h2:first-of-type {
+    margin-bottom: 8px; /* spacing after "I KNEW IT" */
+  }
+
+  #surprise p:first-of-type {
+    margin-top: 0;
+    margin-bottom: 16px; /* spacing after "You + Me = ❤️❤️❤️" */
+  }
+
   #surprise img {
     width: 100%;
     height: auto;
     object-fit: contain;
     border-radius: 15px;
-    margin-top: 12px;
-    display: block;
+    margin-bottom: 16px;
   }
 
   /* 📱 MOBILE */
   @media (max-width: 768px) {
     body { overflow: hidden; }
-    .card { max-height: 92svh; transition: none; }
+    .card { max-height: 92svh; }
     #surprise img { max-height: 60svh; }
-  }
-
-  /* 💻 DESKTOP */
-  @media (min-width: 769px) {
-    body {
-      overflow: hidden;
-    }
-
-    .card {
-      max-height: 50vh; /* default small card */
-      margin: 20px 0; /* initial top/bottom gap */
-      /* remove flex centering to allow bottom gap after "yes" */
-      display: block;
-    }
-
-    #surprise img {
-      max-height: 60vh; /* slightly bigger image */
-      width: 100%;
-      object-fit: contain;
-    }
-
-    .card > h1 {
-      margin-bottom: 0.15em !important;
-      line-height: 1.2 !important;
-    }
-
-    #surprise > p {
-      margin-top: 0 !important;
-      margin-bottom: 0.3em !important; /* slight spacing after "You + Me" */
-      line-height: 1.2 !important;
-    }
-
-    #surprise > h2:first-of-type {
-      margin-top: 0 !important;
-      margin-bottom: 0.5em !important; /* more spacing between "I KNEW IT" and text */
-      line-height: 1.2 !important;
-    }
   }
 
   .cat {
@@ -157,7 +134,7 @@
 
 <canvas id="fireworks"></canvas>
 
-<div class="card" id="card">
+<div class="card">
   <h1>Kayla 💘</h1>
   <p id="prompt">Will you be my Valentine?</p>
 
@@ -169,7 +146,7 @@
   <div id="surprise">
     <h2>I KNEW IT 😍</h2>
     <p>You + Me = ❤️❤️❤️</p>
-    <img src="us-happy.jpg.JPEG" alt="Us being happy together" />
+    <img src="us-happy.jpg.JPEG" alt="Us being happy together">
     <h2>Happy Valentines Day hot stuff. Miss you loads!</h2>
   </div>
 </div>
@@ -182,7 +159,6 @@ const surprise = document.getElementById("surprise");
 const prompt = document.getElementById("prompt");
 const music = document.getElementById("music");
 const meow = document.getElementById("meow");
-const card = document.getElementById("card");
 
 const begs = [
   "pls 😿",
@@ -212,17 +188,15 @@ const noHandler = () => {
 
   noScale = Math.max(noScale - 0.12, 0.4);
   noBtn.style.transform = `scale(${noScale})`;
-  begText.textContent = begs[Math.floor(Math.random() * begs.length)];
+  begText.textContent = begs[Math.floor(Math.random()*begs.length)];
 
   if (firstNo) {
     noBtn.style.position = "fixed";
     firstNo = false;
   }
 
-  noBtn.style.left =
-    Math.random() * (window.innerWidth - noBtn.offsetWidth) + "px";
-  noBtn.style.top =
-    Math.random() * (window.innerHeight - noBtn.offsetHeight) + "px";
+  noBtn.style.left = Math.random() * (window.innerWidth - noBtn.offsetWidth) + "px";
+  noBtn.style.top = Math.random() * (window.innerHeight - noBtn.offsetHeight) + "px";
 
   const cat = document.createElement("img");
   cat.src = cats[catIndex];
@@ -234,10 +208,7 @@ const noHandler = () => {
   cat.style.left = side === "left" ? "-150px" : window.innerWidth + "px";
 
   document.body.appendChild(cat);
-  setTimeout(
-    () => cat.classList.add(side === "left" ? "slide-in-left" : "slide-in-right"),
-    50
-  );
+  setTimeout(() => cat.classList.add(side === "left" ? "slide-in-left" : "slide-in-right"), 50);
 
   activeCats.push(cat);
   setTimeout(() => cat.remove(), 3000);
@@ -250,21 +221,13 @@ yesBtn.addEventListener("click", () => {
   music.play();
   launchFireworks();
 
-  activeCats.forEach((cat) => cat.remove());
+  activeCats.forEach(cat => cat.remove());
   activeCats.length = 0;
 
   prompt.style.display = "none";
   yesBtn.style.display = "none";
   noBtn.style.display = "none";
   begText.style.display = "none";
-
-  // Expand card for desktop with padding-based spacing
-  if (window.innerWidth >= 769) {
-    card.style.maxHeight = "auto"; // let content define height
-    card.style.margin = "20px 0"; // uniform top/bottom gap
-    card.style.display = "block"; // remove flex centering
-  }
-
   surprise.style.display = "block";
 });
 
@@ -282,8 +245,7 @@ window.addEventListener("resize", resizeCanvas);
 
 class Particle {
   constructor(x, y, color) {
-    this.x = x;
-    this.y = y;
+    this.x = x; this.y = y;
     this.r = Math.random() * 3 + 2;
     this.color = color;
     this.vx = (Math.random() - 0.5) * 8;
@@ -291,11 +253,7 @@ class Particle {
     this.alpha = 1;
     this.decay = Math.random() * 0.01 + 0.005;
   }
-  update() {
-    this.x += this.vx;
-    this.y += this.vy;
-    this.alpha -= this.decay;
-  }
+  update() { this.x += this.vx; this.y += this.vy; this.alpha -= this.decay; }
   draw() {
     ctx.globalAlpha = this.alpha;
     ctx.beginPath();
@@ -311,15 +269,15 @@ function launchFireworks() {
   const interval = setInterval(() => {
     if (Date.now() > endTime) return clearInterval(interval);
     const x = Math.random() * canvas.width;
-    const y = Math.random() * (canvas.height / 2);
-    const color = `hsl(${Math.random() * 360},100%,50%)`;
+    const y = Math.random() * canvas.height / 2;
+    const color = `hsl(${Math.random()*360},100%,50%)`;
     for (let i = 0; i < 60; i++) fireworks.push(new Particle(x, y, color));
   }, 500);
   animateFireworks();
 }
 
 function animateFireworks() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0,0,canvas.width,canvas.height);
   for (let i = fireworks.length - 1; i >= 0; i--) {
     fireworks[i].update();
     if (fireworks[i].alpha <= 0) fireworks.splice(i, 1);
