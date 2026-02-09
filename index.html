@@ -118,15 +118,20 @@
       object-fit: contain;
     }
 
-    /* Fix line spacing between "Kayla 💘" and "I KNEW IT 😍" only on desktop */
-    .card h1 {
+    /* Fix line spacing between h1, p, and first h2 inside #surprise on desktop only */
+    .card > h1 {
+      margin-bottom: 0.15em !important;
+      line-height: 1.2 !important;
+    }
+
+    #surprise > p {
       margin-top: 0 !important;
       margin-bottom: 0.15em !important;
       line-height: 1.2 !important;
     }
 
-    #surprise h2:first-of-type {
-      margin-top: 0.15em !important;
+    #surprise > h2:first-of-type {
+      margin-top: 0 !important;
       margin-bottom: 0.15em !important;
       line-height: 1.2 !important;
     }
