@@ -28,7 +28,7 @@
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     position: relative;
     z-index: 2;
-    transition: max-height 0.5s ease, margin 0.5s ease; /* smooth expansion */
+    transition: max-height 0.5s ease, margin 0.5s ease;
     overflow: hidden;
   }
 
@@ -86,29 +86,28 @@
     display: block;
   }
 
-  /* 📱 MOBILE — unchanged */
+  /* 📱 MOBILE */
   @media (max-width: 768px) {
     body { overflow: hidden; }
-    .card { max-height: 92svh; transition: none; } /* no transition on mobile */
+    .card { max-height: 92svh; transition: none; }
     #surprise img { max-height: 60svh; }
   }
 
-  /* 💻 DESKTOP — no scrolling */
+  /* 💻 DESKTOP */
   @media (min-width: 769px) {
     body {
       overflow: hidden;
     }
 
     .card {
-      max-height: 50vh; /* default smaller card */
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      margin: 20px 0; /* initial uniform gap */
+      max-height: 50vh; /* default small card */
+      margin: 20px 0; /* initial top/bottom gap */
+      /* remove flex centering to allow bottom gap after "yes" */
+      display: block;
     }
 
     #surprise img {
-      max-height: 60vh; /* increased image size on desktop */
+      max-height: 60vh; /* slightly bigger image */
       width: 100%;
       object-fit: contain;
     }
@@ -120,13 +119,13 @@
 
     #surprise > p {
       margin-top: 0 !important;
-      margin-bottom: 0.15em !important;
+      margin-bottom: 0.3em !important; /* slight spacing after "You + Me" */
       line-height: 1.2 !important;
     }
 
     #surprise > h2:first-of-type {
       margin-top: 0 !important;
-      margin-bottom: 0.5em !important; /* more spacing here */
+      margin-bottom: 0.5em !important; /* more spacing between "I KNEW IT" and text */
       line-height: 1.2 !important;
     }
   }
@@ -259,10 +258,11 @@ yesBtn.addEventListener("click", () => {
   noBtn.style.display = "none";
   begText.style.display = "none";
 
-  // Expand card for desktop screens with top/bottom gap
+  // Expand card for desktop with padding-based spacing
   if (window.innerWidth >= 769) {
-    card.style.maxHeight = "90vh"; // slightly smaller than full viewport
+    card.style.maxHeight = "auto"; // let content define height
     card.style.margin = "20px 0"; // uniform top/bottom gap
+    card.style.display = "block"; // remove flex centering
   }
 
   surprise.style.display = "block";
