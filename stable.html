@@ -96,18 +96,21 @@
     #surprise img { max-height: 60svh; }
   }
 
-  /* 💻 DESKTOP — updated image size */
+  /* 💻 DESKTOP — centered larger image & content fits */
   @media (min-width: 769px) {
     body { overflow: hidden; }
     .card {
-      max-height: 90vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+        max-height: 90vh;       
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; 
+        padding: 20px clamp(30px, 5vw, 40px); 
     }
     #surprise img {
-        max-height: 55vh;  /* increased from 40vh */
-        width: auto;       /* let width scale naturally */
+        display: block;
+        margin: 12px auto 0 auto;  /* top margin + horizontal centering */
+        max-height: 45%;           /* image uses 45% of card height */
+        width: auto;
         object-fit: contain;
     }
   }
