@@ -34,6 +34,7 @@
     color: #ff4d6d;
     font-size: clamp(24px, 6vw, 32px);
     margin-top: 0;
+    margin-bottom: 8px; /* 🔧 tighten space below Kayla */
   }
 
   p {
@@ -75,6 +76,11 @@
     margin-top: 16px;
   }
 
+  /* 🔧 FIX: tighten spacing between Kayla and I KNEW IT */
+  #surprise h2:first-child {
+    margin-top: 4px;
+  }
+
   #surprise img {
     width: 100%;
     height: auto;
@@ -91,11 +97,9 @@
     #surprise img { max-height: 60svh; }
   }
 
-  /* 💻 DESKTOP — no scrolling */
+  /* 💻 DESKTOP — unchanged */
   @media (min-width: 769px) {
-    body {
-      overflow: hidden;
-    }
+    body { overflow: hidden; }
 
     .card {
       max-height: 90vh;
