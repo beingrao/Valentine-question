@@ -28,7 +28,7 @@
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     position: relative;
     z-index: 2;
-    transition: max-height 0.5s ease; /* smooth expansion */
+    transition: max-height 0.5s ease, margin 0.5s ease; /* smooth expansion */
     overflow: hidden;
   }
 
@@ -104,6 +104,7 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
+      margin: 20px 0; /* initial uniform gap */
     }
 
     #surprise img {
@@ -258,9 +259,10 @@ yesBtn.addEventListener("click", () => {
   noBtn.style.display = "none";
   begText.style.display = "none";
 
-  // Expand card for desktop screens
+  // Expand card for desktop screens with top/bottom gap
   if (window.innerWidth >= 769) {
-    card.style.maxHeight = "100vh"; // increase height smoothly
+    card.style.maxHeight = "90vh"; // slightly smaller than full viewport
+    card.style.margin = "20px 0"; // uniform top/bottom gap
   }
 
   surprise.style.display = "block";
