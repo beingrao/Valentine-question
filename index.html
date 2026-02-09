@@ -34,7 +34,6 @@
     color: #ff4d6d;
     font-size: clamp(24px, 6vw, 32px);
     margin-top: 0;
-    margin-bottom: 8px; /* 🔧 tighten space below Kayla */
   }
 
   p {
@@ -76,11 +75,6 @@
     margin-top: 16px;
   }
 
-  /* 🔧 FIX: tighten spacing between Kayla and I KNEW IT */
-  #surprise h2:first-child {
-    margin-top: 4px;
-  }
-
   #surprise img {
     width: 100%;
     height: auto;
@@ -97,9 +91,11 @@
     #surprise img { max-height: 60svh; }
   }
 
-  /* 💻 DESKTOP — unchanged */
+  /* 💻 DESKTOP — no scrolling */
   @media (min-width: 769px) {
-    body { overflow: hidden; }
+    body {
+      overflow: hidden;
+    }
 
     .card {
       max-height: 90vh;
@@ -155,7 +151,7 @@
     <h2>I KNEW IT 😍</h2>
     <p>You + Me = ❤️❤️❤️</p>
     <img src="us-happy.jpg.JPEG" alt="Us being happy together">
-    <h2>Happy Valentines Day hottie!</h2>
+    <h2>Happy Valentines Day hot stuff. Miss you loads!</h2>
   </div>
 </div>
 
@@ -302,5 +298,3 @@ function animateFireworks() {
 
 </body>
 </html>
-
-
