@@ -86,41 +86,6 @@
     display: block;
   }
 
-  @media (max-width: 768px) {
-    body { overflow: hidden; }
-    .card { max-height: 92svh; }
-    #surprise img { max-height: 60svh; }
-  }
-
-  @media (min-width: 769px) {
-    body { overflow: hidden; }
-
-    .card {
-      max-height: 90vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    #surprise img {
-      max-height: 40vh;
-      width: 100%;
-      object-fit: contain;
-    }
-
-    .card > h1 {
-      margin-bottom: 0.15em;
-      line-height: 1.2;
-    }
-
-    #surprise > h2,
-    #surprise > h3 {
-      margin: 0.15em 0;
-      line-height: 1.2;
-      font-weight: normal;
-    }
-  }
-
   .cat {
     position: fixed;
     width: clamp(80px, 25vw, 120px);
@@ -174,18 +139,6 @@ const prompt = document.getElementById("prompt");
 const music = document.getElementById("music");
 const meow = document.getElementById("meow");
 
-/* 🔓 DESKTOP AUDIO UNLOCK FIX */
-let audioUnlocked = false;
-document.addEventListener("click", () => {
-  if (audioUnlocked) return;
-
-  meow.play().then(() => {
-    meow.pause();
-    meow.currentTime = 0;
-    audioUnlocked = true;
-  }).catch(() => {});
-}, { once: true });
-
 const begs = [
   "Nooooo",
   "pls 😿",
@@ -209,6 +162,9 @@ let begIndex = 0;
 let noScale = 1;
 let firstNo = true;
 const activeCats = [];
+
+/* 🐱 MEOW LOGIC */
+let meowUnlocked = false;
 
 const noHandler = () => {
   meow.currentTime = 0;
@@ -238,18 +194,34 @@ const noHandler = () => {
   cat.style.left = side === "left" ? "-150px" : window.innerWidth + "px";
 
   document.body.appendChild(cat);
-  setTimeout(() => cat.classList.add(side === "left" ? "slide-in-left" : "slide-in-right"), 50);
+  setTimeout(() => cat.classList.add(
+    side === "left" ? "slide-in-left" : "slide-in-right"
+  ), 50);
 
   activeCats.push(cat);
   setTimeout(() => cat.remove(), 3000);
 };
 
-noBtn.addEventListener("mouseover", noHandler);
+/* 🔓 DESKTOP-SAFE AUDIO UNLOCK */
+const unlockAndRun = () => {
+  if (!meowUnlocked) {
+    meow.play().then(() => {
+      meow.pause();
+      meow.currentTime = 0;
+      meowUnlocked = true;
+
+      // After unlock, hover works forever
+      noBtn.addEventListener("mouseenter", noHandler);
+    }).catch(() => {});
+  }
+  noHandler();
+};
+
+noBtn.addEventListener("click", unlockAndRun);
 noBtn.addEventListener("touchstart", noHandler);
 
 yesBtn.addEventListener("click", () => {
   music.play();
-  launchFireworks();
 
   activeCats.forEach(cat => cat.remove());
   activeCats.length = 0;
@@ -260,66 +232,6 @@ yesBtn.addEventListener("click", () => {
   begText.style.display = "none";
   surprise.style.display = "block";
 });
-
-/* FIREWORKS */
-const canvas = document.getElementById("fireworks");
-const ctx = canvas.getContext("2d");
-const fireworks = [];
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
-
-class Particle {
-  constructor(x, y, color) {
-    this.x = x;
-    this.y = y;
-    this.r = Math.random() * 3 + 2;
-    this.color = color;
-    this.vx = (Math.random() - 0.5) * 8;
-    this.vy = (Math.random() - 0.5) * 8;
-    this.alpha = 1;
-    this.decay = Math.random() * 0.01 + 0.005;
-  }
-  update() {
-    this.x += this.vx;
-    this.y += this.vy;
-    this.alpha -= this.decay;
-  }
-  draw() {
-    ctx.globalAlpha = this.alpha;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-    ctx.fillStyle = this.color;
-    ctx.fill();
-    ctx.globalAlpha = 1;
-  }
-}
-
-function launchFireworks() {
-  const endTime = Date.now() + 180000;
-  const interval = setInterval(() => {
-    if (Date.now() > endTime) return clearInterval(interval);
-    const x = Math.random() * canvas.width;
-    const y = Math.random() * (canvas.height / 2);
-    const color = `hsl(${Math.random() * 360},100%,50%)`;
-    for (let i = 0; i < 60; i++) fireworks.push(new Particle(x, y, color));
-  }, 500);
-  animateFireworks();
-}
-
-function animateFireworks() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  for (let i = fireworks.length - 1; i >= 0; i--) {
-    fireworks[i].update();
-    if (fireworks[i].alpha <= 0) fireworks.splice(i, 1);
-    else fireworks[i].draw();
-  }
-  requestAnimationFrame(animateFireworks);
-}
 </script>
 
 </body>
