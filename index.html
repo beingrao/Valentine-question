@@ -86,14 +86,12 @@
     display: block;
   }
 
-  /* 📱 MOBILE */
   @media (max-width: 768px) {
     body { overflow: hidden; }
     .card { max-height: 92svh; }
     #surprise img { max-height: 60svh; }
   }
 
-  /* 💻 DESKTOP */
   @media (min-width: 769px) {
     body { overflow: hidden; }
 
@@ -175,6 +173,18 @@ const surprise = document.getElementById("surprise");
 const prompt = document.getElementById("prompt");
 const music = document.getElementById("music");
 const meow = document.getElementById("meow");
+
+/* 🔓 DESKTOP AUDIO UNLOCK FIX */
+let audioUnlocked = false;
+document.addEventListener("click", () => {
+  if (audioUnlocked) return;
+
+  meow.play().then(() => {
+    meow.pause();
+    meow.currentTime = 0;
+    audioUnlocked = true;
+  }).catch(() => {});
+}, { once: true });
 
 const begs = [
   "Nooooo",
